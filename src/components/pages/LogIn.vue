@@ -26,7 +26,7 @@
             <small v-if="passwordError" id="password-error-message" class="invalid">{{ passwordError }}</small>
           </div>
         </div>
-        <Button label="Register" icon="pi pi-user" @click="logIn"/>
+        <Button label="Log In" icon="pi pi-user" @click="logIn"/>
       </div>
     </div>
     <Toast />
@@ -40,7 +40,6 @@ import Button from "primevue/button";
 import Password from "primevue/password";
 import Toast from "primevue/toast";
 import axiosRequestMaker from '../../requestMaker.js'
-
 export default {
   name: 'LogIn',
   components: {
@@ -70,7 +69,8 @@ export default {
       }).then(response => {
         if (response.data.httpStatusCode === 201 && response.data.isSuccess === true) {
           localStorage.setItem('token', response.data.data.token)
-          this.$router.push('/')
+          // localStorage.setItem('user', jwtDecode(response.data.data.token))
+          // this.$router.push('/')
         } else if (response.data.httpStatusCode === 403 && response.data.isSuccess === false) {
           this.$toast.add({severity: 'error', summary: 'Error', detail: 'Invalid email or password', life: 3000})
         } else {
@@ -94,15 +94,15 @@ export default {
     },
     validatePassword() {
       // Example validation: Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number, and one special character
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-      if (!this.password) {
-        this.passwordError = 'Password is required';
-      } else if (!passwordPattern.test(this.password)) {
-        this.passwordError = 'Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character';
-      } else {
-        this.passwordError = null; // No error, password is valid
-      }
+      // const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      // const passwordPattern = /^.{3}$/;
+      // if (!this.password) {
+      //   this.passwordError = 'Password is required';
+      // } else if (!passwordPattern.test(this.password)) {
+      //   this.passwordError = 'Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character';
+      // } else {
+      //   this.passwordError = null; // No error, password is valid
+      // }
     }
   }
 }

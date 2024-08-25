@@ -82,7 +82,7 @@ export default {
     },
     onQuestionTypeSelect() {
       if (this.questionType.value === 1) {
-        this.possibleAnswers = [this.questionText];
+        this.possibleAnswers = [];
       } else if (this.questionType.value === 3) {
         this.possibleAnswers = ['DA', 'NU'];
       } else {
@@ -96,14 +96,13 @@ export default {
       }
       axiosRequestMaker.post('https://webapihealth20240823092904.azurewebsites.net/api/question', {
         text: this.questionText,
-        type: this.questionType.value,
+        questionType: this.questionType.value,
         possibleAnswers: this.possibleAnswers
       },{
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
-      }).then((response) => {
-        console.log(response);
+      }).then(() => {
         this.$toast.add({severity:'success', summary: 'Success', detail: 'Intrebarea a fost adaugata cu succes', life: 3000});
         this.questionText = null;
         this.questionType = null;

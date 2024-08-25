@@ -3,11 +3,13 @@ import RegisterUser from "@/components/pages/RegisterUser.vue";
 import UserForm from "@/components/pages/UserForm.vue";
 import NotFound from "@/components/pages/NotFound.vue";
 import AddQuestion from "@/components/pages/AddQuestion.vue";
+import DeleteQuestion from "@/components/pages/DeleteQuestion.vue";
+import UserProfile from "@/components/pages/Profile.vue";
 
 const routes = [
     {
         path: '/',
-        name: 'home',
+        name: 'userForm',
         component: UserForm
     },
     {
@@ -24,6 +26,16 @@ const routes = [
         path: '/add-question',
         name: 'addQuestion',
         component: AddQuestion
+    },
+    {
+        path: '/delete-question',
+        name: 'deleteQuestion',
+        component: DeleteQuestion
+    },
+    {
+        path: '/user-profile',
+        name: 'userProfile',
+        component: UserProfile
     },
     {
         path: '/:pathMatch(.*)*',

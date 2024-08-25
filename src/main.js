@@ -14,6 +14,17 @@ const router = createRouter({
     routes: routes
 })
 
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+
+    if ((to.path !== '/login' && to.path !== '/register-user') && !token) {
+        next('/login');
+    } else {
+        next();
+    }
+});
+
+
 app.use(router)
 app.use(PrimeVue, {ripple: true});
 app.use(ToastService);

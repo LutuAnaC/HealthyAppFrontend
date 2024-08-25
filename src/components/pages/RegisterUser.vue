@@ -97,7 +97,6 @@ export default {
       }).catch(error => {
         console.log(error)
       })
-      console.log(this.email, this.password, this.name)
     },
     validateEmail() {
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

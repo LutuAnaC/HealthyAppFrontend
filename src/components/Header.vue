@@ -18,6 +18,7 @@
 <script>
 import InputSwitch from "primevue/inputswitch";
 import Menubar from "primevue/menubar";
+import {jwtDecode} from "jwt-decode";
 
 export default {
   name: 'HeaderMenu',
@@ -27,15 +28,24 @@ export default {
   },
   data() {
     return {
+      user: null,
       currentTheme: 'aura-light-amber',
       route: '',
       darkModeChecked: false,
       items: [
         {
-          label: 'Programmatic',
-          icon: 'pi pi-link',
+          label: 'Profile',
+          icon: 'pi pi-user',
           command: () => {
-            this.$router.push('/introduction');
+            this.$router.push('/user-profile');
+          }
+        },
+        {
+          label: 'Log Out',
+          icon: 'pi pi-sign-out',
+          command: () => {
+            localStorage.removeItem('token');
+            this.$router.push('/login');
           }
         }
       ]
@@ -62,15 +72,38 @@ export default {
     },
     updateRoute() {
       this.route = this.$route.name || ''; // Get the current route name
-      console.log(this.route);
     }
   },
   mounted() {
-    this.updateRoute();  // Update the route when the component is mounted
+    this.updateRoute();
 
     this.$watch('$route', () => {
       this.updateRoute();
     });
+
+    if (localStorage.getItem('token') !== null) {
+      this.user = jwtDecode(localStorage.getItem('token'));
+      console.log(this.user);
+      if (this.user.role === 'admin') {
+        this.items = [
+          ...this.items,
+          {
+            label: 'Adauga o intrebare',
+            icon: 'pi pi-link',
+            command: () => {
+              this.$router.push('/add-question');
+            }
+          },
+          {
+            label: 'Sterge o intrebare',
+            icon: 'pi pi-link',
+            command: () => {
+              this.$router.push('/delete-question');
+            }
+          },
+        ]
+      }
+    }
   },
   beforeMount() {
     this.currentTheme = localStorage.getItem('theme') || 'aura-light-amber';
