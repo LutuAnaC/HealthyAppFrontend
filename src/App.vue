@@ -1,16 +1,25 @@
 <template>
-  <router-view/>
+  <div>
+    <HeaderMenu />
+    <router-view />
+  </div>
 </template>
 
 <script>
-import 'primevue/resources/themes/mdc-light-indigo/theme.css'
 import 'primeicons/primeicons.css';
-import 'primevue/resources/primevue.min.css'
+import 'primevue/resources/primevue.min.css';
 import 'primeflex/primeflex.css';
+// import InputSwitch from 'primevue/inputswitch';
+import HeaderMenu from "@/components/Header.vue";
+
 export default {
-  name: 'App'
-}
+  name: 'App',
+  components: {
+    HeaderMenu,
+  }
+};
 </script>
+
 
 <style>
 #app {
@@ -19,7 +28,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
 
