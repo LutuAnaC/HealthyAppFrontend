@@ -34,14 +34,14 @@ export default {
       darkModeChecked: false,
       items: [
         {
-          label: 'Profile',
-          icon: 'pi pi-user',
+          label: 'Intrebari zilnice',
+          icon: 'pi pi-question',
           command: () => {
             this.$router.push('/user-profile');
           }
         },
         {
-          label: 'Log Out',
+          label: 'Deconectare',
           icon: 'pi pi-sign-out',
           command: () => {
             localStorage.removeItem('token');
@@ -83,7 +83,6 @@ export default {
 
     if (localStorage.getItem('token') !== null) {
       this.user = jwtDecode(localStorage.getItem('token'));
-      console.log(this.user);
       if (this.user.role === 'admin') {
         this.items = [
           ...this.items,
@@ -101,6 +100,17 @@ export default {
               this.$router.push('/delete-question');
             }
           },
+        ]
+      } else {
+        this.items = [
+          {
+            label: 'Jurnal',
+            icon: 'pi pi-book',
+            command: () => {
+              this.$router.push('/user-journal');
+            }
+          },
+          ...this.items
         ]
       }
     }

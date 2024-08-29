@@ -35,6 +35,19 @@
           <small v-if="passwordError" id="password-error-message" class="invalid">{{ passwordError }}</small>
           </div>
         </div>
+
+        <div class="flex flex-column gap-2 align-items-center mb-3">
+          <div class="w-10 flex flex-column align-items-center">
+            <label for="password">Gender:</label>
+            <Dropdown v-model="gender"
+                      :options="genderOptions"
+                      placeholder="Select a gender"
+                      class="w-4"
+                      optionLabel="name"/>
+            <small v-if="genderError" id="password-error-message" class="invalid">{{ genderError }}</small>
+          </div>
+        </div>
+
         <Button label="Register" icon="pi pi-user" @click="register"/>
       </div>
     </div>
@@ -47,6 +60,7 @@ import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import Password from "primevue/password";
 import Toast from "primevue/toast";
+import Dropdown from "primevue/dropdown";
 import axiosRequestMaker from '../../requestMaker.js'
 
 export default {
@@ -55,32 +69,48 @@ export default {
     Button,
     InputText,
     Password,
-    Toast
+    Toast,
+    Dropdown
   },
   data() {
     return {
       username: '',
       email: '',
       password: '',
+      gender: null,
+      genderOptions: [
+        {
+          name: 'Male',
+          value: 0
+        },
+        {
+          name: "Female",
+          value: 1
+        }
+      ],
       usernameError: null,
       emailError: null,
-      passwordError: null
+      passwordError: null,
+      genderError: null
     }
   },
   methods: {
     register() {
+      console.log(this.username, this.email, this.password, this.gender)
       this.validateEmail()
       this.validatePassword()
       this.validateName()
+      this.validateGender()
 
-      if (this.passwordError || this.emailError || this.usernameError) {
+      if (this.passwordError || this.emailError || this.usernameError || this.genderError) {
         return
       }
 
       axiosRequestMaker.post('https://webapihealth20240823092904.azurewebsites.net/api/authentication/register',{
         userName: this.username,
         email: this.email,
-        password: this.password
+        password: this.password,
+        gender: this.gender.value
       }).then(response => {
             if (response.data.isSuccess === true) {
               this.$toast.add({severity:'success', summary:'Success', detail:'User registered successfully', life: 3000});
@@ -110,7 +140,8 @@ export default {
     },
     validatePassword() {
       // Example validation: Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number, and one special character
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      // const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      const passwordPattern = /^.{3,}$/;
 
       if (!this.password) {
         this.passwordError = 'Password is required';
@@ -127,6 +158,13 @@ export default {
 
       if (this.username.length < 3) {
         this.usernameError = 'Name must be at least 3 characters long';
+      }
+    },
+    validateGender() {
+      if (this.gender === null) {
+        this.genderError = 'Please select a gender!';
+      } else {
+        this.genderError = null;
       }
     }
   }

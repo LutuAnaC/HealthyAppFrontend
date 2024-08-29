@@ -5,6 +5,7 @@ import NotFound from "@/components/pages/NotFound.vue";
 import AddQuestion from "@/components/pages/AddQuestion.vue";
 import DeleteQuestion from "@/components/pages/DeleteQuestion.vue";
 import UserProfile from "@/components/pages/Profile.vue";
+import UserJournal from "@/components/pages/UserJournal.vue";
 
 const routes = [
     {
@@ -36,6 +37,14 @@ const routes = [
         path: '/user-profile',
         name: 'userProfile',
         component: UserProfile
+    },
+    {
+        path: '/user-journal',
+        name: 'userJournal',
+        component: UserJournal
+    },
+    {
+
     },
     {
         path: '/:pathMatch(.*)*',

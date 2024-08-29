@@ -3,21 +3,24 @@
     <div class="grid-container">
       <div class="left-panel">
         <Panel header="Formularul zilnic">
-          <div v-for="question in dailyQuestions" :key="question.id" class="flex flex-row flex-wrap align-items-center justify-content-start mb-5">
-            <label class="mr-3">{{ question.question }}</label>
-            <Calendar
-                v-if="question.id !== 5 && question.id !== 6"
-                v-model="dailyAnswers[question.id]"
-                dateFormat="dd/mm/yy"
-                showTime="true"
-            />
-            <Dropdown v-if="question.possibleAnswers && question.id === 5"
-                      v-model="dailyAnswers[question.id]"
-                      :options="question.possibleAnswers"
-                      placeholder="Selecteaza un raspuns" />
+          <div v-for="question in dailyQuestions" :key="question.id"
+               class="flex flex-row flex-wrap align-items-center justify-content-start mb-5">
+            <div v-if="!(question.id == 5 && user.gender == 0)">
+              <label class="mr-3">{{ question.question }}</label>
+              <Calendar
+                  v-if="question.id !== 5 && question.id !== 6"
+                  v-model="dailyAnswers[question.id]"
+                  dateFormat="dd/mm/yy"
+                  showTime="true"
+              />
+              <Dropdown v-if="question.possibleAnswers && question.id === 5"
+                        v-model="dailyAnswers[question.id]"
+                        :options="question.possibleAnswers"
+                        placeholder="Selecteaza un raspuns"/>
 
-            <InputText v-if="!question.possibleAnswers && question.id === 6" v-model="dailyAnswers[question.id]"
-                       placeholder="Raspuns" />
+              <InputText v-if="!question.possibleAnswers && question.id === 6" v-model="dailyAnswers[question.id]"
+                         placeholder="Raspuns"/>
+            </div>
           </div>
           <Button label="Trimite" @click="submitDailyAnswers" :disabled="dailyFormAlreadyCompleted"/>
         </Panel>
@@ -26,14 +29,15 @@
         <Panel header="Istoric">
           <div class="flex flex-row flex-wrap align-items-center">
             <label class="mr-3">Selectati data:</label>
-            <Calendar v-model="historyDate" dateFormat="dd/mm/yy" @dateSelect="showHistoryForm" />
+            <Calendar v-model="historyDate" dateFormat="dd/mm/yy" @dateSelect="showHistoryForm"/>
           </div>
           <div v-if="historyFormResults && historyDate">
             <div class="card flex justify-content-center">
-              <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-30rem" />
+              <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-30rem"/>
             </div>
           </div>
-          <div v-if="historyFormResults === null || historyDate === null" class="flex flex-row justify-content-start mt-5">
+          <div v-if="historyFormResults === null || historyDate === null"
+               class="flex flex-row justify-content-start mt-5">
             <label>Nu este data selectata!</label>
           </div>
         </Panel>
@@ -42,7 +46,8 @@
         <Panel header="Usefull Data"></Panel>
       </div>
     </div>
-    <Toast />
+    <Toast/>
+    <label v-if="historyFormResults === null || historyDate === null">Nu exista date pentru ziua selectata!</label>
   </Panel>
 </template>
 
@@ -57,6 +62,7 @@ import Calendar from "primevue/calendar";
 import requestMaker from "@/requestMaker";
 import moment from "moment";
 import Chart from "primevue/chart";
+import {jwtDecode} from "jwt-decode";
 
 // import moment from "moment";
 export default {
@@ -80,7 +86,8 @@ export default {
       chartData: null,
       chartOptions: {
         cutout: '60%'
-      }
+      },
+      userGender: 1
     }
   },
   methods: {
@@ -88,20 +95,22 @@ export default {
       axiosRequestMaker.get('https://webapihealth20240823092904.azurewebsites.net/api/daily-question', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }}).then(response => {
-          if (response.data.isSuccess === false) {
-            this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
-            return
+        }
+      }).then(response => {
+        if (response.data.isSuccess === false) {
+          this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
+          return
+        }
+
+        this.dailyQuestions = response.data.data.map(question => {
+          return {
+            id: question.dailyQuestionId,
+            question: question.text,
+            possibleAnswers: question.isYesOrNoQuestion ? ['DA', 'NU'] : null
           }
-          this.dailyQuestions = response.data.data.map(question => {
-            return {
-              id: question.dailyQuestionId,
-              question: question.text,
-              possibleAnswers: question.isYesOrNoQuestion ? ['DA', 'NU'] : null
-            }
-          })
+        })
       }).catch(() => {
-        this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
+        // this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
       });
     },
     submitDailyAnswers() {
@@ -121,7 +130,12 @@ export default {
           this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
           return
         }
-        this.$toast.add({severity: 'success', summary: 'Success', detail: 'Raspunsurile au fost trimise cu succes', life: 3000})
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Raspunsurile au fost trimise cu succes',
+          life: 3000
+        })
         window.location.reload()
       }).catch(() => {
         this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
@@ -144,8 +158,8 @@ export default {
           this.dailyFormAlreadyCompleted = true
         }
       }).catch(() => {
-        this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
-      }
+            this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
+          }
       )
     },
     showHistoryForm() {
@@ -198,6 +212,8 @@ export default {
   beforeMount() {
     this.getDailyQuestions()
     this.checkIfDailyFormIsCompleted()
+    this.user = jwtDecode(localStorage.getItem('token'))
+    console.log(this.user);
   }
 }
 </script>
@@ -206,7 +222,7 @@ export default {
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Two equal columns */
-  grid-template-rows: 1fr auto;   /* Main row takes remaining space, bottom row has auto height */
+  grid-template-rows: 1fr auto; /* Main row takes remaining space, bottom row has auto height */
   height: 100vh; /* Full viewport height */
   gap: 10px; /* Optional: Add space between panels */
   padding: 10px; /* Optional: Add padding around the grid */
