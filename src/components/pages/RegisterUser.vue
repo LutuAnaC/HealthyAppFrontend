@@ -96,7 +96,6 @@ export default {
   },
   methods: {
     register() {
-      console.log(this.username, this.email, this.password, this.gender)
       this.validateEmail()
       this.validatePassword()
       this.validateName()
@@ -158,6 +157,10 @@ export default {
 
       if (this.username.length < 3) {
         this.usernameError = 'Name must be at least 3 characters long';
+      }
+
+      if (this.username && this.username.length >= 3) {
+        this.usernameError = null;
       }
     },
     validateGender() {

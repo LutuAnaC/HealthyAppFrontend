@@ -38,7 +38,8 @@
           </div>
           <div v-if="historyFormResults === null || historyDate === null"
                class="flex flex-row justify-content-start mt-5">
-            <label>Nu este data selectata!</label>
+            <label v-if="historyFormResults === null">Nu exista date pentru ziua selectata!</label>
+            <label v-if="historyDate === null">Introduceti o data pentru a vizualiza datele!</label>
           </div>
         </Panel>
       </div>
@@ -47,7 +48,6 @@
       </div>
     </div>
     <Toast/>
-    <label v-if="historyFormResults === null || historyDate === null">Nu exista date pentru ziua selectata!</label>
   </Panel>
 </template>
 
@@ -187,6 +187,9 @@ export default {
       })
     },
     setChartData() {
+      if (!this.historyFormResults) {
+        return null;
+      }
       const documentStyle = getComputedStyle(document.body);
       let sleptHours = 0;
       let hoursOfEating = 0;
