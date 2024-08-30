@@ -34,13 +34,6 @@ export default {
       darkModeChecked: false,
       items: [
         {
-          label: 'Intrebari zilnice',
-          icon: 'pi pi-question',
-          command: () => {
-            this.$router.push('/user-profile');
-          }
-        },
-        {
           label: 'Deconectare',
           icon: 'pi pi-sign-out',
           command: () => {
@@ -72,6 +65,7 @@ export default {
     },
     updateRoute() {
       this.route = this.$route.name || ''; // Get the current route name
+      console.log(this.route);
     }
   },
   mounted() {
@@ -110,6 +104,20 @@ export default {
               this.$router.push('/user-journal');
             }
           },
+          {
+            label: 'Intrebari zilnice',
+            icon: 'pi pi-question',
+            command: () => {
+              this.$router.push('/user-profile');
+            }
+          },
+          {
+            label: 'Istoricul Intrebarilor Zilnice',
+            icon: 'pi pi-history',
+            command: () => {
+              this.$router.push('/daily-questions-history');
+            }
+          },
           ...this.items
         ]
       }
@@ -119,6 +127,7 @@ export default {
     this.currentTheme = localStorage.getItem('theme') || 'aura-light-amber';
     this.darkModeChecked = this.currentTheme === 'aura-dark-amber';
     this.changeTheme();
+    this.updateRoute();
   }
 }
 </script>

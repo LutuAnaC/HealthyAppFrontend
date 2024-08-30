@@ -4,8 +4,9 @@ import UserForm from "@/components/pages/UserForm.vue";
 import NotFound from "@/components/pages/NotFound.vue";
 import AddQuestion from "@/components/pages/AddQuestion.vue";
 import DeleteQuestion from "@/components/pages/DeleteQuestion.vue";
-import UserProfile from "@/components/pages/Profile.vue";
+import UserProfile from "@/components/pages/DailyQuestion.vue";
 import UserJournal from "@/components/pages/UserJournal.vue";
+import History from "@/components/pages/DailyQuestionsHistory.vue";
 
 const routes = [
     {
@@ -44,7 +45,9 @@ const routes = [
         component: UserJournal
     },
     {
-
+        path: '/daily-questions-history',
+        name: 'dailyQuestionsHistory',
+        component: History
     },
     {
         path: '/:pathMatch(.*)*',

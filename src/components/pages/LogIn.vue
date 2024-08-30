@@ -40,6 +40,7 @@ import Button from "primevue/button";
 import Password from "primevue/password";
 import Toast from "primevue/toast";
 import axiosRequestMaker from '../../requestMaker.js'
+import {jwtDecode} from "jwt-decode";
 export default {
   name: 'LogIn',
   components: {
@@ -77,7 +78,12 @@ export default {
           this.$toast.add({severity: 'error', summary: 'Error', detail: 'An error occurred', life: 3000})
         }
         localStorage.setItem('token', response.data.data.token)
-        this.$router.push('/')
+        let userInformation = jwtDecode(response.data.data.token)
+        if (userInformation.role === 'admin') {
+          this.$router.push('/add-question')
+        } else {
+          this.$router.push('/')
+        }
       }).catch(error => {
         console.log(error)
       })
